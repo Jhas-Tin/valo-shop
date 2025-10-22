@@ -16,17 +16,12 @@ const geist = Geist({
   variable: "--font-geist-sans",
 });
 
-export default function RootLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${geist.variable}`}>
-      <body>
-        <ClerkProvider>
-          {/* <TopNav /> */}
-          {children}
-        </ClerkProvider>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en">
+        <body>{children}</body>
+      </html>
+    </ClerkProvider>
   );
 }

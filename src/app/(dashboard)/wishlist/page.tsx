@@ -18,6 +18,7 @@ type WeaponSkin = {
   status?: string;
 };
 
+// ✅ Automatically connect to correct ValoArmory backend
 const baseURL =
   process.env.NEXT_PUBLIC_API_BASE ||
   (typeof window !== "undefined" && window.location.hostname === "localhost"
@@ -28,6 +29,7 @@ export default function UserPage() {
   const [weapons, setWeapons] = useState<WeaponSkin[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // 🔁 Fetch weapons periodically
   useEffect(() => {
     let interval: NodeJS.Timeout;
 
@@ -44,6 +46,7 @@ export default function UserPage() {
 
         const data: WeaponSkin[] = await res.json();
 
+        // ✅ Show only active skins with valid image URLs
         const activeSkins = data.filter(
           (skin) =>
             skin.status === "Active" &&
@@ -59,20 +62,23 @@ export default function UserPage() {
       }
     };
 
-    fetchWeapons(); 
-    interval = setInterval(fetchWeapons, 5000); 
+    fetchWeapons(); // first load
+    interval = setInterval(fetchWeapons, 5000); // refresh every 5s
     return () => clearInterval(interval);
   }, []);
 
   return (
     <div className="flex h-screen bg-[#f8f9fb] text-gray-900">
+      {/* Sidebar */}
       <UserSidebar />
 
+      {/* Main Content */}
       <main className="flex-1 p-8 overflow-y-auto">
         <h1 className="text-3xl font-extrabold text-[#111b26] mb-6">
           ValoShop
         </h1>
 
+        {/* Filters and Search */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <div className="col-span-2">
             <div className="relative">
@@ -99,6 +105,7 @@ export default function UserPage() {
           </Button>
         </div>
 
+        {/* Weapon Cards */}
         {loading ? (
           <p className="text-gray-500 text-sm">Loading weapons...</p>
         ) : weapons.length === 0 ? (

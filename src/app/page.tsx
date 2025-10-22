@@ -1,21 +1,15 @@
 "use client";
 
-import {
-  SignedOut,
-  SignInButton,
-  SignedIn,
-  useUser,
-  UserButton,
-} from "@clerk/nextjs";
+import { SignedOut, SignInButton, useUser } from "@clerk/nextjs";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { motion } from "framer-motion";
 
 export default function HomePage() {
   const { isSignedIn, isLoaded } = useUser();
   const router = useRouter();
 
-  // ✅ Redirect signed-in users to /user page
   useEffect(() => {
     if (isLoaded && isSignedIn) {
       router.replace("/user");
@@ -23,80 +17,61 @@ export default function HomePage() {
   }, [isLoaded, isSignedIn, router]);
 
   return (
-    <div className="fixed inset-0 flex bg-[#0f1923] text-white overflow-hidden">
-      {/* 🔻 TOP NAVIGATION BAR */}
-      <nav className="absolute top-0 left-0 w-full flex items-center justify-between px-8 py-4 bg-[#1a2632]/90 backdrop-blur-md shadow-md z-30">
-        <div className="flex items-center gap-3">
-          <Image
-            src="/valooo.png"
-            alt="Valorant Logo"
-            width={50}
-            height={50}
-            priority
-          />
-          <h1 className="text-xl font-extrabold tracking-widest text-[#ff4655] uppercase">
-            ValoArmory
-          </h1>
-        </div>
-
-        {/* User avatar if signed in */}
-        <SignedIn>
-          <div className="border border-[#ff4655] rounded-full p-1 hover:shadow-md transition">
-            <UserButton />
-          </div>
-        </SignedIn>
-      </nav>
-
-      {/* 🔻 LEFT SIDE - Login Section (Visible only when signed out) */}
-      <SignedOut>
-        <div className="relative flex flex-col justify-between items-center w-full md:w-[35%] px-6 py-8 z-10 bg-[#0f1923]/95 backdrop-blur-sm mt-16 md:mt-0">
-          {/* MAIN LOGIN CONTENT */}
-          <div className="flex flex-col justify-center items-center flex-grow">
-            <div className="text-center space-y-3 mb-6 scale-90 md:scale-100">
-              <h1 className="text-3xl md:text-4xl font-extrabold tracking-wider text-[#ff4655] uppercase">
-                Welcome Agent
-              </h1>
-              <p className="text-xs md:text-sm text-gray-400">
-                Sign in to start your Valorant journey.
-              </p>
-            </div>
-
-            {/* Sign In Section */}
-            <div className="flex flex-col w-full max-w-xs space-y-4 scale-90 md:scale-100">
-              <SignInButton mode="modal">
-                <span className="w-full text-center bg-[#ff4655] hover:bg-[#e13c4a] py-3 rounded font-semibold tracking-wide cursor-pointer transition-colors uppercase">
-                  Shop Now
-                </span>
-              </SignInButton>
-            </div>
-          </div>
-
-          {/* FOOTER LOGO SECTION */}
-          <div className="h-24 flex flex-col items-center justify-center opacity-30 hover:opacity-100 transition-opacity">
-            <div className="w-160 h-[1px] bg-[#cfcfcf] mb-3 rounded-full"></div>
-            <Image
-              src="/valooo.png"
-              alt="Valorant Footer Logo"
-              width={150}
-              height={150}
-              priority
-              className="object-contain"
-            />
-          </div>
-        </div>
-      </SignedOut>
-
-      {/* 🔻 RIGHT SIDE - Background Image (Always Visible) */}
-      <div className="hidden md:flex w-[65%] relative">
+    <div className="relative flex items-center justify-center min-h-screen bg-[#0f1923] text-white overflow-hidden">
+      <motion.div
+        className="absolute inset-0"
+        animate={{ scale: [1, 1.05, 1] }}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+      >
         <Image
-          src="/valo.jpg"
+          src="/back.jpg"
           alt="Valorant Background"
           fill
-          className="object-cover opacity-90"
+          className="object-cover"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-l from-[#0f1923]/80 to-transparent" />
-      </div>
+        <motion.div
+          className="absolute inset-0 bg-gradient-to-tr from-[#0f1923]/60 via-[#ff4655]/20 to-black/50"
+          animate={{ opacity: [0.7, 1, 0.7] }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        />
+      </motion.div>
+
+      <SignedOut>
+        <motion.div
+          className="relative z-10 flex flex-col items-center text-center px-8 py-12"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1 }}
+        >
+          <motion.h1
+            className="text-5xl md:text-6xl font-extrabold uppercase tracking-wider text-[#ff4655]"
+            initial={{ scale: 0.9 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 1.2, ease: "easeOut" }}
+          >
+            Valo Shop
+          </motion.h1>
+
+          <motion.p
+            className="text-gray-300 text-sm md:text-base tracking-widest uppercase mt-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 1 }}
+          >
+            Get Your Gear. Join the Battle Anywhere.
+          </motion.p>
+
+          <SignInButton mode="modal">
+            <motion.button
+              className="mt-8 px-10 py-3 bg-[#ff4655] text-white rounded-md font-semibold uppercase tracking-widest shadow-lg hover:scale-105 hover:shadow-2xl transition-transform duration-300"
+              whileHover={{ scale: 1.08, boxShadow: "0 0 25px rgba(255,70,85,0.6)" }}
+            >
+              Shop Now
+            </motion.button>
+          </SignInButton>
+        </motion.div>
+      </SignedOut>
     </div>
   );
 }

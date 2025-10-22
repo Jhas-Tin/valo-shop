@@ -18,17 +18,18 @@ type WeaponSkin = {
   status?: string;
 };
 
-// ✅ Automatically connect to the correct ValoArmory base URL
+// ✅ Automatically connect to correct ValoArmory backend
 const baseURL =
-  typeof window !== "undefined" && window.location.hostname === "localhost"
+  process.env.NEXT_PUBLIC_API_BASE ||
+  (typeof window !== "undefined" && window.location.hostname === "localhost"
     ? "http://localhost:3001"
-    : "https://valo-armory.vercel.app";
+    : "https://valo-armory.vercel.app");
 
 export default function UserPage() {
   const [weapons, setWeapons] = useState<WeaponSkin[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Fetch data with auto-refresh
+  // 🔁 Fetch weapons periodically
   useEffect(() => {
     let interval: NodeJS.Timeout;
 
@@ -36,13 +37,16 @@ export default function UserPage() {
       try {
         const res = await fetch(`${baseURL}/api/public/skins`, {
           cache: "no-store",
+          headers: {
+            "Content-Type": "application/json",
+          },
         });
 
         if (!res.ok) throw new Error("Failed to load weapons");
 
         const data: WeaponSkin[] = await res.json();
 
-        // ✅ Only show active skins with valid images
+        // ✅ Show only active skins with valid image URLs
         const activeSkins = data.filter(
           (skin) =>
             skin.status === "Active" &&
@@ -59,10 +63,7 @@ export default function UserPage() {
     };
 
     fetchWeapons(); // first load
-
-    // 🔁 Auto-refresh every 5 seconds
-    interval = setInterval(fetchWeapons, 5000);
-
+    interval = setInterval(fetchWeapons, 5000); // refresh every 5s
     return () => clearInterval(interval);
   }, []);
 

@@ -25,3 +25,4 @@ export const posts = createTable(
   }),
   (t) => [index("name_idx").on(t.name)],
 );
+
